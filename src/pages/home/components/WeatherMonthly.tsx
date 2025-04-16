@@ -1,6 +1,6 @@
 import { Calendar } from "@mantine/dates";
 import React from "react";
-import { Text, Loader, Center, Indicator, Stack } from "@mantine/core";
+import { Text, Loader, Center, Stack } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { DailyWeatherProps, WeatherQueryData, DailyForecast } from "../../../types/types";
 import { weatherApi } from "../../../api/weather";
@@ -40,12 +40,12 @@ const WeatherMonthly: React.FC<DailyWeatherProps> = ({ city }) => {
     );
   }
 
-  if (error) {
-    return <Text c="red">Error loading forecast data</Text>;
-  }
+  if (error instanceof Error) {
+      return <Text c="red">Error fetching data: {error.message}</Text>;
+    }
 
   if (!dailyData || dailyData.length === 0) {
-    return <Text>No daily forecast available</Text>;
+    return <Text>No forecast available</Text>;
   }
 
   const forecastMap = dailyData.reduce((map, forecast) => {
@@ -66,7 +66,6 @@ const WeatherMonthly: React.FC<DailyWeatherProps> = ({ city }) => {
           const day = date.getDate();
 
           return (
-            <Indicator size={6} color="red" offset={-2} disabled={!forecast}>
               <div>
                 <div>{day}</div>
                 {forecast && (
@@ -80,7 +79,6 @@ const WeatherMonthly: React.FC<DailyWeatherProps> = ({ city }) => {
                   </Stack>
                 )}
               </div>
-            </Indicator>
           );
         }}
       />

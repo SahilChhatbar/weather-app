@@ -43,9 +43,9 @@ const WeatherDaily: React.FC<DailyWeatherProps> = ({ city, country }) => {
     return <Center><Loader/></Center>;
   }
 
-  if (error) {
-    return <Text c="red">Error loading forecast data</Text>;
-  }
+ if (error instanceof Error) {
+     return <Text c="red">Error fetching data: {error.message}</Text>;
+   }
 
   if (!dailyData || dailyData.length === 0) {
     return <Text>No daily forecast available</Text>;

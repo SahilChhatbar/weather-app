@@ -43,6 +43,9 @@ const AirQuality = () => {
   if (isLoading) {
     return <Center><Loader /></Center>;
   }
+  if (error instanceof Error) {
+      return <Text c="red">Error fetching data: {error.message}</Text>;
+    }
 
   return (
     <Card
