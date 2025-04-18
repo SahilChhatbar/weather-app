@@ -5,12 +5,7 @@ import { weatherApi } from "../../../api/weather";
 import { useQuery } from "@tanstack/react-query";
 import { getAirQualityCategory } from "../../../utils/getAQI";
 import { LocationData } from "../../../api/ipinfo";
-
-interface WeatherData {
-  air_quality: {
-    pm10: number;
-  };
-}
+import { WeatherData } from "../../../types/types";
 
 const AirQuality = () => {
   const [formattedDate, setFormattedDate] = useState("");

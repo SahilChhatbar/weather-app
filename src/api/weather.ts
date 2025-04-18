@@ -55,7 +55,8 @@ export const weatherApi = {
           wind_kph: Math.round(hour.wind_kph),
           gust_kph: Math.round(hour.gust_kph),
           chance_of_rain: hour.chance_of_rain,
-          uv_index: hour.uv
+          uv_index: hour.uv,
+          precip_in:hour.precip_in,
         };
       });
       

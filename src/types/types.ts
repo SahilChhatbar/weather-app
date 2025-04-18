@@ -38,6 +38,7 @@ export interface HourlyForecast extends TemperatureData, WindData, WeatherCondit
   time: string;
   chance_of_rain: number;
   uv_index: number;
+  precip_in:number;
 }
 
 export interface HourlyWeatherProps {
@@ -64,9 +65,18 @@ export interface DailyWeatherProps {
   country?: string;
 }
 
-interface LocationData {
+export interface LocationData {
   city: string;
   timezone: string;
   country?: string;
   region?: string;
+  currentTime:string
 }
+
+export interface PrecipitationData {
+  time: string;
+  precipitation: number;
+}
+
+export interface WeatherData extends AirQualityData {}
+

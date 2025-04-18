@@ -58,18 +58,19 @@ const WeatherMonthly: React.FC<DailyWeatherProps> = ({ city }) => {
     <Center>
       <Calendar
         size="xl"
-        className="bg-white"
+        className="bg-white rounded-[10px]"
         static
+        withCellSpacing
         renderDay={(date) => {
           const dateStr = date.toDateString();
           const forecast = forecastMap[dateStr];
           const day = date.getDate();
-
+          
           return (
-              <div>
-                <div>{day}</div>
+              <div className="pb-20">
+               {day}
                 {forecast && (
-                  <Stack gap={0} align="center">
+                  <Stack gap={10} align="center">
                     <Text fw={700} size="xs">
                       {forecast?.maxtemp_c}°
                     </Text>
