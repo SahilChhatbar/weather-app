@@ -24,7 +24,7 @@ interface AirQualityData {
 }
 
 export interface Weather {
-  location: string;
+  location: string | undefined;
 }
 
 export interface CurrentWeather extends TemperatureData, WeatherCondition, WindData, AirQualityData {}

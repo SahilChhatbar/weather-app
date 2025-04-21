@@ -1,21 +1,24 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, Text, Loader, Group, Divider, Grid, Stack, Center } from "@mantine/core";
-import { fetchWeather } from "../../../utils/weatherFunction";
 import { MdSunny } from "react-icons/md";
 import { getAirQualityRating } from "../../../utils/getAQR";
 import { currentTime } from "../../../constants";
+import { fetchWeather } from "../../../utils/weatherFunction";
 
 const WeatherToday: React.FC = () => {
   const { data, error, isLoading } = useQuery({
     queryKey: ["weather"],
     queryFn: fetchWeather,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    staleTime: 30000
   });
 
   if (isLoading) {
     return (
       <Center>
-        <Loader />
+       <Loader />
       </Center>
     );
   }
@@ -28,7 +31,7 @@ const WeatherToday: React.FC = () => {
     return <Text c="red">No data available</Text>;
   }
 
-  const { weatherData } = data;
+  const { weatherData, locationData } = data;
   const airQuality = getAirQualityRating(weatherData?.air_quality?.pm10);
 
   return (
@@ -41,7 +44,7 @@ const WeatherToday: React.FC = () => {
     >
       <Group justify="space-between">
         <Text fw={500} size="lg">
-          CURRENT WEATHER
+          CURRENT WEATHER - {locationData?.city}
         </Text>
         <Text fw={500}>{currentTime}</Text>
       </Group>

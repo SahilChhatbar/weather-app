@@ -6,10 +6,12 @@ import { useQuery } from "@tanstack/react-query";
 import { getAirQualityCategory } from "../../../utils/getAQI";
 import { LocationData } from "../../../api/ipinfo";
 import { WeatherData } from "../../../types/types";
+import { queryClient } from "../../../config/queryClient";
 
 const AirQuality = () => {
   const [formattedDate, setFormattedDate] = useState("");
-  const [locationData, setLocationData] = useState<LocationData | null>(null);
+  const [_locationData, setLocationData] = useState<LocationData | null>(null);
+  const selectedLocation = queryClient.getQueryData<string>(['selectedLocation']);
 
   useEffect(() => {
     getUserLocation().then((location) => {
@@ -26,9 +28,9 @@ const AirQuality = () => {
   }, []);
 
   const { data: airQualityData, isLoading, error } = useQuery<WeatherData, Error>({
-    queryKey: ['currentWeather', locationData?.city],
-    queryFn: () => weatherApi.getCurrentWeather({ location: locationData?.city || '' }),
-    enabled: !!locationData?.city,
+    queryKey: ['currentWeather', selectedLocation],
+    queryFn: () => weatherApi.getCurrentWeather({ location: selectedLocation || '' }),
+    enabled: !!selectedLocation,
   });
 
   const getAirQualityProgress = (pm10Value: number) => {
@@ -63,7 +65,7 @@ const AirQuality = () => {
         </Text>
       </Stack>
       {error && <Text c="red">Error loading air quality data</Text>}
-      {airQualityData && airQualityData.air_quality && (
+      {airQualityData && airQualityData?.air_quality && (
         <Group align="center" grow>
           <div className="relative flex">
             <RingProgress
@@ -73,24 +75,24 @@ const AirQuality = () => {
               sections={[
                 {
                   value: getAirQualityProgress(airQualityData?.air_quality?.pm10/5),
-                  color: getAirQualityCategory(airQualityData?.air_quality.pm10)?.color,
+                  color: getAirQualityCategory(airQualityData?.air_quality?.pm10)?.color,
                 },
               ]}
             />
             <Text 
               fw={700} 
               size="xl" 
-              className="absolute top-[38%] left-[18%]" 
+              className="absolute top-[36%] left-[16%]" 
             >
               {Math.round(airQualityData?.air_quality?.pm10)}
             </Text>
           </div>
           <Stack gap={0}>
             <Text fw={700} size="xl">
-              {getAirQualityCategory(airQualityData?.air_quality.pm10)?.category}
+              {getAirQualityCategory(airQualityData?.air_quality?.pm10)?.category}
             </Text>
             <Text>
-              {getAirQualityCategory(airQualityData?.air_quality.pm10)?.description}
+              {getAirQualityCategory(airQualityData?.air_quality?.pm10)?.description}
             </Text>
           </Stack>
         </Group>

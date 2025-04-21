@@ -47,7 +47,7 @@ const WeatherDaily: React.FC<DailyWeatherProps> = ({ city, country }) => {
      return <Text c="red">Error fetching data: {error.message}</Text>;
    }
 
-  if (!dailyData || dailyData.length === 0) {
+  if (!dailyData || dailyData?.length === 0) {
     return <Text>No daily forecast available</Text>;
   }
 
@@ -115,7 +115,7 @@ const WeatherDaily: React.FC<DailyWeatherProps> = ({ city, country }) => {
                   </Badge>
                 </Group>
               </Group>
-              {index < dailyData.length - 1 && <Divider />}
+              {index < dailyData?.length - 1 && <Divider />}
             </div>
           );
         })}

@@ -4,14 +4,16 @@ import { weatherApi } from '../../../api/weather';
 import { getUserLocation } from '../../../api/ipinfo';
 import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
-import { HourlyForecast, LocationData,PrecipitationData } from '../../../types/types';
+import { HourlyForecast, LocationData, PrecipitationData } from '../../../types/types';
+import { queryClient } from '../../../config/queryClient';
 
 const MinuteCast = () => {
   const [precipData, setPrecipData] = useState<PrecipitationData[]>([]);
-  const [location, setLocation] = useState<string>('');
-  const [currentTime, setCurrentTime] = useState<string>('');
+  const [_location, setLocation] = useState<string >('');
+  const [_currentTime, setCurrentTime] = useState<string>('');
   const [currentTemp, setCurrentTemp] = useState<number | null>(null);
-
+  const selectedLocation = queryClient.getQueryData<string>(['selectedLocation']);
+  
   const { 
     data: locationData, 
     isLoading: locationLoading, 
@@ -39,9 +41,9 @@ const MinuteCast = () => {
     data: currentWeather,
     isLoading: currentWeatherLoading
   } = useQuery({
-    queryKey: ['currentWeather', location],
-    queryFn: () => weatherApi.getCurrentWeather({ location }),
-    enabled: !!location,
+    queryKey: ['currentWeather', selectedLocation],
+    queryFn: () => weatherApi.getCurrentWeather({ location: selectedLocation }),
+    enabled: !!selectedLocation,
   });
 
   useEffect(() => {
@@ -55,9 +57,9 @@ const MinuteCast = () => {
     isLoading: weatherLoading, 
     error: weatherError 
   } = useQuery<HourlyForecast[], Error>({
-    queryKey: ['hourlyForecast', location],
-    queryFn: () => weatherApi.getHourlyForecast({ location }),
-    enabled: !!location,
+    queryKey: ['hourlyForecast', selectedLocation],
+    queryFn: () => weatherApi.getHourlyForecast({ location:selectedLocation }),
+    enabled: !!selectedLocation,
   });
 
   useEffect(() => {
@@ -77,8 +79,8 @@ const MinuteCast = () => {
   const isLoading = locationLoading || weatherLoading || currentWeatherLoading;
   const error = locationError || weatherError;
 
-  const maxPrecip = precipData.length > 0 
-    ? Math.max(...precipData.map(item => item.precipitation))
+  const maxPrecip = precipData?.length > 0 
+    ? Math.max(...precipData.map(item => item?.precipitation))
     : 5; 
 
       if (isLoading) {
@@ -97,14 +99,14 @@ const MinuteCast = () => {
   <Center>
     <Card shadow="none" padding="md" radius="md" withBorder className="bg-gray-100 w-145">
       <Group justify="space-between" mb="md">
-          <Text fw={700} size="xl">{location}</Text>
+          <Text fw={700} size="xl">{selectedLocation}</Text>
           {currentTemp !== null && (
             <Text fw={700} size="xl">{currentTemp}°C</Text>
           )}
       </Group>
       {!isLoading && !error && (
         <Box className="bg-white p-4 rounded-md">
-          {precipData.length > 0 && (
+          {precipData?.length > 0 && (
             <Box mt={20} mb={10}>
               <Group justify="apart" mb={5}>
                 <Text size="sm" fw={700} c="gray.7">Heavy</Text>
@@ -128,8 +130,7 @@ const MinuteCast = () => {
                   tickLine: false
                 }}
                 valueFormatter={(value: number) => `${value.toFixed(1)} mm`}
-              />
-                <Text size="sm" fw={700} c="gray.7">Light</Text>
+              /><Text size="sm" fw={700} c="gray.7" className='absolute bottom-18'>Light</Text>
              </Box>
           )}
           <Divider my="sm" />
